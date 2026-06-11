@@ -34,4 +34,15 @@ describe('WaterCard', () => {
     render(<WaterCard {...mockData} />)
     expect(screen.getByText('22°C')).toBeInTheDocument()
   })
+  describe('WaterCard con etiqueta de tanque', () => {
+  it('muestra el nombre del tanque', () => {
+    render(<WaterCard ph={6.5} ec={1.8} ppm={900} temperatura={22} orp={350} nombre="Sala Madre" fecha="2026-06-01" />)
+    expect(screen.getByText('Sala Madre')).toBeInTheDocument()
+  })
+
+  it('muestra la fecha de armado', () => {
+    render(<WaterCard ph={6.5} ec={1.8} ppm={900} temperatura={22} orp={350} nombre="Sala Madre" fecha="2026-06-01" />)
+    expect(screen.getByText(/2026-06-01/)).toBeInTheDocument()
+  })
+})
 })
