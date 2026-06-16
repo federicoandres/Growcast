@@ -2,6 +2,8 @@ import { render, screen } from '@testing-library/react'
 import { WaterCard } from './WaterCard'
 
 const mockData = {
+  nombre: 'Tanque Principal',
+  fecha: '2026-06-16',
   ph: 6.5,
   ec: 1.8,
   ppm: 900,

@@ -20,8 +20,8 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-950 text-white">
       <header className="bg-gray-900 border-b border-green-900 px-6 py-4">
-        <h1 className="text-2xl font-bold text-green-400">🌱 GrowCast</h1>
-        <p className="text-gray-400 text-sm">Monitor de cultivo indoor</p>
+       <h1 className="text-2xl font-bold text-green-400">🌱 CultivOS</h1>
+<p className="text-gray-400 text-sm">Cannabis Co-Piloto</p>
       </header>
 
       <nav className="flex gap-2 px-6 py-3 bg-gray-900 border-b border-gray-800">
