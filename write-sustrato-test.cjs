@@ -20,7 +20,7 @@ const code = [
 "  it('muestra el nombre del grupo y cantidad de plantas', () => {",
 "    render(<SustratoCard {...mockData} />)",
 "    expect(screen.getByText('Tropical Runtz - Tanda 2')).toBeInTheDocument()",
-"    expect(screen.getByText(/6/)).toBeInTheDocument()",
+"    expect(screen.getByText('6 plantas')).toBeInTheDocument()",
 "  })",
 "",
 "  it('muestra temperatura y humedad de sustrato', () => {",
