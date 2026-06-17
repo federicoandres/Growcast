@@ -20,6 +20,12 @@ const grupos = [
   { nombre: 'Carlson Phenotype A', etapa: 'vegetativo', cantidadPlantas: 4, temperatura: 23, humedad: 55, ph: 5.9, ec: 1.2, runoffPh: 6.0, runoffEc: 1.3 },
 ] as const
 
+const navTabs = [
+  { id: 'agua', label: 'Solucion de riego' },
+  { id: 'ambiente', label: 'Ambiente' },
+  { id: 'plantas', label: 'Cultivares' },
+]
+
 function App() {
   const [tab, setTab] = useState('agua')
 
@@ -31,13 +37,13 @@ function App() {
       </header>
 
       <nav className='flex gap-2 px-6 py-3 bg-gray-900 border-b border-gray-800'>
-        {['agua', 'ambiente', 'plantas', 'luz', 'runoff'].map((t) => (
+        {navTabs.map((t) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={'px-4 py-1.5 rounded text-sm font-medium capitalize ' + (tab === t ? 'bg-green-600 text-white' : 'text-gray-400 hover:text-white')}
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            className={'px-4 py-1.5 rounded text-sm font-medium ' + (tab === t.id ? 'bg-green-600 text-white' : 'text-gray-400 hover:text-white')}
           >
-            {t}
+            {t.label}
           </button>
         ))}
       </nav>
@@ -46,8 +52,6 @@ function App() {
         {tab === 'agua' && tanques.map((t) => <WaterCard key={t.nombre} {...t} />)}
         {tab === 'ambiente' && salas.map((s) => <AmbienteCard key={s.nombre} {...s} />)}
         {tab === 'plantas' && grupos.map((g) => <SustratoCard key={g.nombre} {...g} />)}
-        {tab === 'luz' && <p className='text-gray-400'>Proximamente...</p>}
-        {tab === 'runoff' && <p className='text-gray-400'>Proximamente...</p>}
       </main>
     </div>
   )
