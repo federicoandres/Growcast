@@ -4,32 +4,38 @@ import { AmbienteCard } from './components/AmbienteCard'
 import { SustratoCard } from './components/SustratoCard'
 import { GeneticaCard } from './components/GeneticaCard'
 import { Dashboard } from './components/Dashboard'
+import { NuevoCultivoForm } from './components/NuevoCultivoForm'
 
-const cultivosBase = [
+const misGeneticas = [
+  { id: 'g1', nombre: 'Tropical Runtz' },
+  { id: 'g2', nombre: 'Carlson Phenotype A' },
+]
+
+const cultivosBaseInicial = [
   { id: 'flor1', nombre: 'Sala Flor', etapa: 'floracion' },
   { id: 'madre1', nombre: 'Sala Madre', etapa: 'vegetativo' },
   { id: 'clones1', nombre: 'Sala Clones', etapa: 'clones' },
 ]
 
-const datosAgua: Record<string, any> = {
+const datosAguaInicial: Record<string, any> = {
   flor1: { nombre: 'Sala Flor', fecha: '2026-05-15', ph: 6.5, ec: 1.8, ppm: 900, temperatura: 23, orp: 350 },
   madre1: { nombre: 'Sala Madre', fecha: '2026-06-01', ph: 6.2, ec: 1.4, ppm: 700, temperatura: 22, orp: 380 },
   clones1: { nombre: 'Sala Clones', fecha: '2026-06-08', ph: 5.9, ec: 0.8, ppm: 400, temperatura: 21, orp: 420 },
 }
 
-const datosAmbiente: Record<string, any> = {
+const datosAmbienteInicial: Record<string, any> = {
   flor1: { nombre: 'Sala Flor', etapa: 'floracion', temperatura: 26, humedad: 88, co2: 1200 },
   madre1: { nombre: 'Sala Madre', etapa: 'vegetativo', temperatura: 24, humedad: 60, co2: null },
   clones1: { nombre: 'Sala Clones', etapa: 'clones', temperatura: 23, humedad: 70, co2: null },
 }
 
-const datosSustrato: Record<string, any[]> = {
+const datosSustratoInicial: Record<string, any[]> = {
   flor1: [{ nombre: 'Tropical Runtz - Tanda 2', etapa: 'floracion', cantidadPlantas: 6, temperatura: 21, humedad: 45, ph: 6.1, ec: 1.6, runoffPh: 6.3, runoffEc: 1.9 }],
   madre1: [{ nombre: 'Carlson Phenotype A', etapa: 'vegetativo', cantidadPlantas: 4, temperatura: 23, humedad: 55, ph: 5.9, ec: 1.2, runoffPh: 6.0, runoffEc: 1.3 }],
   clones1: [{ nombre: 'Clones varios', etapa: 'clones', cantidadPlantas: 12, temperatura: 23, humedad: 70, ph: 5.8, ec: 0.7, runoffPh: 5.9, runoffEc: 0.8 }],
 }
 
-const datosGenetica: Record<string, any[]> = {
+const datosGeneticaInicial: Record<string, any[]> = {
   flor1: [{
     descripcion: 'Tropical Runtz - Tanda 2',
     cantidadPlantas: 6,
@@ -66,9 +72,15 @@ const navTabs = [
 ]
 
 function App() {
-  const [vista, setVista] = useState<'dashboard' | 'cultivo'>('dashboard')
+  const [vista, setVista] = useState<'dashboard' | 'cultivo' | 'nuevo-cultivo'>('dashboard')
   const [cultivoId, setCultivoId] = useState<string | null>(null)
   const [tab, setTab] = useState('ambiente')
+
+  const [cultivosBase, setCultivosBase] = useState(cultivosBaseInicial)
+  const [datosAgua, setDatosAgua] = useState(datosAguaInicial)
+  const [datosAmbiente, setDatosAmbiente] = useState(datosAmbienteInicial)
+  const [datosSustrato, setDatosSustrato] = useState(datosSustratoInicial)
+  const [datosGenetica, setDatosGenetica] = useState(datosGeneticaInicial)
 
   function abrirCultivo(id: string) {
     setCultivoId(id)
@@ -81,12 +93,37 @@ function App() {
     setCultivoId(null)
   }
 
+  function guardarNuevoCultivo(datos: { nombre: string; etapa: string; fechaInicio: string; cantidadPlantas: number; geneticaId: string }) {
+    const id = 'cultivo-' + Date.now()
+    const genetica = misGeneticas.find((g) => g.id === datos.geneticaId)
+
+    setCultivosBase((prev) => [...prev, { id, nombre: datos.nombre, etapa: datos.etapa }])
+    setDatosAmbiente((prev) => ({ ...prev, [id]: { nombre: datos.nombre, etapa: datos.etapa, temperatura: 24, humedad: 60, co2: null } }))
+    setDatosAgua((prev) => ({ ...prev, [id]: { nombre: datos.nombre, fecha: datos.fechaInicio, ph: 6.0, ec: 1.0, ppm: 500, temperatura: 22, orp: 400 } }))
+    setDatosSustrato((prev) => ({ ...prev, [id]: [{ nombre: genetica ? genetica.nombre : datos.nombre, etapa: datos.etapa, cantidadPlantas: datos.cantidadPlantas, temperatura: 22, humedad: 60, ph: 6.0, ec: 1.0, runoffPh: 6.0, runoffEc: 1.0 }] }))
+    setDatosGenetica((prev) => ({ ...prev, [id]: [{ descripcion: genetica ? genetica.nombre : datos.nombre, cantidadPlantas: datos.cantidadPlantas, fechaInicio: datos.fechaInicio, intervenciones: [] }] }))
+
+    abrirCultivo(id)
+  }
+
+  if (vista === 'nuevo-cultivo') {
+    return (
+      <div className='min-h-screen bg-gray-950 text-white py-10'>
+        <NuevoCultivoForm
+          geneticasDisponibles={misGeneticas}
+          onGuardar={guardarNuevoCultivo}
+          onCargarGenetica={() => alert('Cargar genetica: proximamente')}
+        />
+      </div>
+    )
+  }
+
   if (vista === 'dashboard') {
     return (
       <Dashboard
         cultivos={cultivosBase}
         onSelectCultivo={abrirCultivo}
-        onNuevoCultivo={() => alert('Pantalla de carga de cultivo: proximamente')}
+        onNuevoCultivo={() => setVista('nuevo-cultivo')}
       />
     )
   }
